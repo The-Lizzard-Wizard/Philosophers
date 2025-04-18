@@ -1,4 +1,4 @@
-NAME = philosophers.c
+NAME = philosophers
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g3
 SRC = philosophers.c
@@ -14,7 +14,7 @@ all: libft_comp $(NAME)
 
 $(NAME) : $(OBJ) $(LIBFT)
 	@echo "compiling philosophers 🧙"
-	@$(CC) $(OBJ) $(LIBFT)-o $(NAME)
+	@$(CC) $(OBJ) $(LIBFT) -o $(NAME)
 
 libft_comp :
 	@$(MAKE) -s -C $(LIBFT_DIR)
@@ -29,12 +29,10 @@ clean:
 	@echo "clean all obj🔮"
 	@rm -rf $(ODIR)
 	@$(MAKE) -s -C $(LIBFT_DIR) clean
-	@$(MAKE) -s -C $(MLX_DIR) clean
 
 fclean: clean
 	@echo "remove exe 🍄"
 	@rm -rf $(NAME)
 	@$(MAKE) -s -C $(LIBFT_DIR) fclean
-	@$(MAKE) -s -C $(MLX_DIR) clean
 
 re: fclean all

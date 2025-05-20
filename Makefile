@@ -1,23 +1,19 @@
 NAME = philosophers
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g3
-SRC = philosophers.c
+CFLAGS = -Wall -Wextra -Werror -pthread -g3
+SRC = philosophers.c ft_atoi.c
 DEPS = inc/philosophers.h
 ODIR = obj/
 OBJ = $(SRC:%.c=$(ODIR)%.o)
-LIBFT_DIR = ./libft
-LIBFT = $(LIBFT_DIR)/libft.a
 
-.PHONY: all clean fclean re libft_comp
+.PHONY: all clean fclean re
 
-all: libft_comp $(NAME)
+all: $(NAME)
 
-$(NAME) : $(OBJ) $(LIBFT)
+$(NAME) : $(OBJ)
 	@echo "compiling philosophers 🧙"
-	@$(CC) $(OBJ) $(LIBFT) -o $(NAME)
+	@$(CC) $(OBJ) -o $(NAME)
 
-libft_comp :
-	@$(MAKE) -s -C $(LIBFT_DIR)
 
 $(ODIR)%.o: src/%.c Makefile $(DEPS) | $(ODIR)
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -28,11 +24,9 @@ $(ODIR):
 clean:
 	@echo "clean all obj🔮"
 	@rm -rf $(ODIR)
-	@$(MAKE) -s -C $(LIBFT_DIR) clean
 
 fclean: clean
 	@echo "remove exe 🍄"
 	@rm -rf $(NAME)
-	@$(MAKE) -s -C $(LIBFT_DIR) fclean
 
 re: fclean all

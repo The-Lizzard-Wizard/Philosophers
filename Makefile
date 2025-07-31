@@ -1,7 +1,8 @@
 NAME = philosophers
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread -g3
-SRC = philosophers.c ft_atoi.c
+SRC = philosophers.c ft_atoi.c\
+	init.c pars.c thread.c
 DEPS = inc/philosophers.h
 ODIR = obj/
 OBJ = $(SRC:%.c=$(ODIR)%.o)

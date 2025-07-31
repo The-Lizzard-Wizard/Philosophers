@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
+/*   pars.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/18 15:42:07 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/07/31 10:52:39 by gchauvet         ###   ########.fr       */
+/*   Created: 2025/07/31 10:45:15 by gchauvet          #+#    #+#             */
+/*   Updated: 2025/07/31 10:49:49 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int	start_philo(t_data *data)
+void	pars(char **argv, t_data *data)
 {
-	return (0);
-}
-
-int	stop_philo(t_data *data)
-{
-	return (0);
-}
-
-int main(int argc, char **argv)
-
-{
-	t_data *data;
-
-	if (argc != 5)
-		return (EXIT_FAILURE);
-	data = malloc(sizeof(t_data));
-	if (!data)
-		return (EXIT_FAILURE);
-	pars(argv, data);
-	init_table(data);
-	return (EXIT_SUCCESS);
+	data->nb_philo = ft_atoi(argv[1]);
+	data->time_to_die = ft_atoi(argv[2]);
+	data->time_to_eat = ft_atoi(argv[3]);
+	data->time_to_sleep = ft_atoi(argv[4]);
+	printf("nb_philo : %u\nttd : %u\ntte : %u\ntts : %u\n", data->nb_philo,
+			data->time_to_die, data->time_to_eat, data->time_to_sleep);
 }

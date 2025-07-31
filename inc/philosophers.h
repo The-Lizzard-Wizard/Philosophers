@@ -6,11 +6,14 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:09 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/05/20 16:51:40 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/05/23 15:41:47 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pthread.h>
+
+#define TRUE 1
+#define FALSE 2
 
 typedef struct	s_fork
 {
@@ -19,6 +22,7 @@ typedef struct	s_fork
 
 typedef struct s_philo
 {
+	int				id;
 	int				is_sleep;
 	int				is_eating;
 	int				is_thinking;

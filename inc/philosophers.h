@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:09 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/05 12:22:59 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:44:12 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@ typedef struct s_philo
 	int				is_eating;
 	int				is_thinking;
 	unsigned int	nb_philo;
-	unsigned int	time_to_die;
-	unsigned int	time_to_sleep;
-	unsigned int	time_to_eat;
+	long int		time_to_die;
+	long int		time_to_sleep;
+	long int		time_to_eat;
 	pthread_t		philo_tid;
 	t_fork			*fork_left;
 	t_fork			*fork_right;
 	long int		first_milisec;
 	int				iamdie;
+	long int		last_eat;
 } t_philo;
 
 typedef struct s_table
@@ -49,9 +50,9 @@ typedef struct	s_data
 	t_table			*table;
 	t_philo			*philo_list;
 	unsigned int	nb_philo;
-	unsigned int	time_to_die;
-	unsigned int	time_to_sleep;
-	unsigned int	time_to_eat;
+	long int		time_to_die;
+	long int		time_to_sleep;
+	long int		time_to_eat;
 	long int		first_milisec;
 	t_fork			*someoneide;
 } t_data;

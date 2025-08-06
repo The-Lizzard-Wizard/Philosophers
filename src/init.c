@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:46:36 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/05 14:48:45 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/06 15:53:23 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,21 @@ void init_philo(t_data *data, t_philo *philo)
 	philo->is_thinking = FALSE;
 	philo->nb_philo = data->nb_philo;
 	philo->time_to_die = data->time_to_die;
-	philo->time_to_eat = data->nb_philo;
+	philo->time_to_eat = data->time_to_eat;
 	philo->time_to_sleep = data->time_to_sleep;
 	philo->first_milisec = data->first_milisec;
-	philo->fork_left = malloc(sizeof(t_fork));
-	pthread_mutex_init(&philo->fork_left->mutex, NULL);
 	philo->fork_right = NULL;
 	philo->iamdie = FALSE;
+	philo->last_eat = 0;
+
+	philo->fork_left = malloc(sizeof(t_fork));
+	pthread_mutex_init(&philo->fork_left->mutex, NULL);
+	philo->fork_left->flag = FALSE;
+
+	if (philo->id > 1)
+		philo->fork_right = data->philo_list[((philo->id - 1) + data->nb_philo - 1) % data->nb_philo].fork_left;
+	if (philo->id == (int)philo->nb_philo)
+		data->philo_list[0].fork_right = philo->fork_left;
 }
 
 void init_table(t_data *data)
@@ -43,7 +51,7 @@ void init_table(t_data *data)
 	i = -1;
 	while (++i < data->nb_philo)
 	{
-		data->philo_list[i].id = i;
+		data->philo_list[i].id = i + 1;
 		init_philo(data, &data->philo_list[i]);
 		pthread_create(&data->philo_list[i].philo_tid, NULL, &philo_routin,
 						&data->philo_list[i]);

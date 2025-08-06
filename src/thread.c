@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:46:02 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/06 15:59:12 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/06 16:25:02 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,14 @@ void	philo_eat(t_philo *philo)
 	printf("%ld %d is eating\n", get_time(philo->first_milisec), philo->id);
 	philo->last_eat = get_time(philo->first_milisec);
 	thread_wait(philo->time_to_eat);
+	if (is_die(philo) == TRUE)
+	{
+		philo->fork_left->flag = FALSE;
+		pthread_mutex_unlock(&philo->fork_left->mutex);
+		philo->fork_right->flag = FALSE;
+		pthread_mutex_unlock(&philo->fork_right->mutex);
+		return ;
+	}
 	printf("%ld %d is sleeping\n", get_time(philo->first_milisec), philo->id);
 	philo->fork_left->flag = FALSE;
 	pthread_mutex_unlock(&philo->fork_left->mutex);
@@ -75,9 +83,9 @@ void	*philo_routin(void *data)
 
 	self_tid = pthread_self();
 	//printf("id : %i tid :  %ld\n", philo->id, self_tid);
-	thread_wait(10);
+	thread_wait(START_DEL);
 	if (philo->id % 2 == 1)
-		thread_wait(50);
+		thread_wait(START_DEL);
 	while (is_die(philo) == FALSE)
 	{
 		printf("%ld %d is thinking\n", get_time(philo->first_milisec), philo->id);

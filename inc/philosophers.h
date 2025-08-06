@@ -6,15 +6,20 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:09 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/06 15:44:12 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/06 16:06:19 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#ifndef PHILOSOPHERS_H
+# define PHILOSOPHERS_H
 
 #include <bits/types/struct_timeval.h>
 #include <pthread.h>
 
 #define TRUE 1
 #define FALSE 2
+
+#define START_DEL 10
 
 typedef struct	s_fork
 {
@@ -63,3 +68,5 @@ void	init_philo(t_data *data, t_philo *philo);
 void	init_table(t_data *data);
 void	pars(char **argv, t_data *data);
 long int	get_time(long int first_milisec);
+
+#endif

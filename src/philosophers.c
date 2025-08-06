@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:07 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/04 16:05:39 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/06 16:11:22 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ long int	get_time(long int first_milisec)
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000 - first_milisec);
+	return ((tv.tv_sec * 1000 + tv.tv_usec / 1000 - first_milisec));
 }
 
 int	start_philo(t_data *data)

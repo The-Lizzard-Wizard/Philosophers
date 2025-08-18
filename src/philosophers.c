@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:07 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/06 16:11:22 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/18 11:12:13 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ int	start_philo(t_data *data)
 
 int	stop_philo(t_data *data)
 {
-	unsigned int i;
-	
+	unsigned int	i;
+
 	i = 0;
 	while (i < data->nb_philo)
 	{
@@ -44,10 +44,10 @@ int	stop_philo(t_data *data)
 	return (0);
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 
 {
-	t_data *data;
+	t_data	*data;
 
 	if (argc != 5)
 		return (EXIT_FAILURE);

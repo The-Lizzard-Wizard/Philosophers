@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:46:02 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/18 11:26:48 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/19 13:56:57 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,31 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-void	print_status(t_philo *philo, char *ms)
-{
-	printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
-}
-
-int	is_die(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->thefork->mutex);
-	if (philo->thefork->flag == TRUE)
-	{
-		pthread_mutex_unlock(&philo->thefork->mutex);
-		return (TRUE);
-	}
-	pthread_mutex_unlock(&philo->thefork->mutex);
-	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
-	{
-		pthread_mutex_lock(&philo->thefork->mutex);
-		philo->thefork->flag = TRUE;
-		pthread_mutex_unlock(&philo->thefork->mutex);
-		print_status(philo, "died");
-		return (TRUE);
-	}
-	return (FALSE);
-}
 
 void	thread_wait(long int milisec, t_philo *philo)
 {
@@ -54,30 +29,59 @@ void	thread_wait(long int milisec, t_philo *philo)
 	}
 }
 
-void	philo_eat(t_philo *philo)
+void	take_fork(t_philo *philo)
+{
+	while (philo->have_fork < 2 && is_die(philo) == FALSE)
+	{
+		pthread_mutex_lock(&philo->fork_left->mutex);
+		if (philo->fork_left->flag == FALSE)
+		{
+			print_status(philo, "has taken a fork");
+			philo->fork_left->flag = TRUE;
+			philo->have_fork++;
+		}
+		pthread_mutex_unlock(&philo->fork_left->mutex);
+		pthread_mutex_lock(&philo->fork_right->mutex);
+		if (philo->fork_right->flag == FALSE)
+		{
+			print_status(philo, "has taken a fork");
+			philo->fork_right->flag = TRUE;
+			philo->have_fork++;
+		}
+		pthread_mutex_unlock(&philo->fork_right->mutex);
+	}
+}
+
+void	drop_fork(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->fork_left->mutex);
-	philo->fork_left->flag = TRUE;
-	print_status(philo, "has taken a fork");
+	philo->fork_left->flag = FALSE;
+	pthread_mutex_unlock(&philo->fork_left->mutex);
 	pthread_mutex_lock(&philo->fork_right->mutex);
-	philo->fork_right->flag = TRUE;
-	print_status(philo, "has taken a fork");
+	philo->fork_right->flag = FALSE;
+	pthread_mutex_unlock(&philo->fork_right->mutex);
+	philo->have_fork = 0;
+}
+
+void	philo_eat(t_philo *philo)
+{
+	take_fork(philo);
+	if (is_die(philo) == TRUE)
+	{
+		drop_fork(philo);
+		return ;
+	}
 	print_status(philo, "is eating");
+	philo->nb_eat++;
 	philo->last_eat = get_time(philo->first_milisec);
 	thread_wait(philo->time_to_eat, philo);
 	if (is_die(philo) == TRUE)
 	{
-		philo->fork_left->flag = FALSE;
-		pthread_mutex_unlock(&philo->fork_left->mutex);
-		philo->fork_right->flag = FALSE;
-		pthread_mutex_unlock(&philo->fork_right->mutex);
+		drop_fork(philo);
 		return ;
 	}
 	print_status(philo, "is sleeping");
-	philo->fork_left->flag = FALSE;
-	pthread_mutex_unlock(&philo->fork_left->mutex);
-	philo->fork_right->flag = FALSE;
-	pthread_mutex_unlock(&philo->fork_right->mutex);
+	drop_fork(philo);
 	thread_wait(philo->time_to_sleep, philo);
 }
 

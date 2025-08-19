@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:46:36 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/18 11:18:14 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/19 13:55:01 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,32 @@
 #include <sys/time.h>
 #include <sys/select.h>
 
-void	init_philo(t_data *data, t_philo *philo)
+int	init_philo_fork(t_data *data, t_philo *philo)
 {
 	int	nightbor_id;
 
 	nightbor_id = ((philo->id - 1) + data->nb_philo - 1) % data->nb_philo;
-	philo->is_sleep = FALSE;
-	philo->is_eating = FALSE;
-	philo->is_thinking = FALSE;
+	philo->fork_left = malloc(sizeof(t_fork));
+	if (!philo->fork_left)
+		return (0);
+	if (pthread_mutex_init(&philo->fork_left->mutex, NULL) != 0)
+	{
+		free(philo->fork_left);
+		return (0);
+	}
+	philo->fork_left->flag = FALSE;
+	if (philo->id > 1)
+		philo->fork_right = data->philo_list[nightbor_id].fork_left;
+	if (philo->id == (int)philo->nb_philo)
+		data->philo_list[0].fork_right = philo->fork_left;
+	return (1);
+}
+
+int	init_philo(t_data *data, t_philo *philo)
+{
+	philo->max_eat = data->nb_eat;
+	philo->nb_eat = 0;
+	philo->have_fork = 0;
 	philo->nb_philo = data->nb_philo;
 	philo->time_to_die = data->time_to_die;
 	philo->time_to_eat = data->time_to_eat;
@@ -33,30 +51,57 @@ void	init_philo(t_data *data, t_philo *philo)
 	philo->fork_right = NULL;
 	philo->last_eat = 0;
 	philo->thefork = data->someoneide;
-	philo->fork_left = malloc(sizeof(t_fork));
-	pthread_mutex_init(&philo->fork_left->mutex, NULL);
-	philo->fork_left->flag = FALSE;
-	if (philo->id > 1)
-		philo->fork_right = data->philo_list[nightbor_id].fork_left;
-	if (philo->id == (int)philo->nb_philo)
-		data->philo_list[0].fork_right = philo->fork_left;
+	if (init_philo_fork(data, philo) == 0)
+		return (0);
+	return (1);
 }
 
-void	init_table(t_data *data)
+int	init_table_2(t_data *data)
+{
+	data->first_milisec = get_time(0);
+	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
+	if (!data->philo_list)
+		return (0);
+	data->someoneide = malloc(sizeof(t_fork));
+	if (!data->someoneide)
+	{
+		free(data->philo_list);
+		return (0);
+	}
+	if (pthread_mutex_init(&data->someoneide->mutex, NULL) != 0)
+	{
+		free(data->philo_list);
+		free(data->someoneide);
+		return (0);
+	}
+	data->someoneide->flag = FALSE;
+	return (1);
+}
+
+int	init_table(t_data *data)
 {
 	unsigned int	i;
 
-	data->first_milisec = get_time(0);
-	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
-	data->someoneide = malloc(sizeof(t_fork));
-	pthread_mutex_init(&data->someoneide->mutex, NULL);
-	data->someoneide->flag = FALSE;
-	i = -1;
-	while (++i < data->nb_philo)
+	if (init_table_2(data) == 0)
+		return (0);
+	i = 0;
+	while (i < data->nb_philo)
 	{
 		data->philo_list[i].id = i + 1;
-		init_philo(data, &data->philo_list[i]);
-		pthread_create(&data->philo_list[i].philo_tid, NULL, &philo_routin,
-			&data->philo_list[i]);
+		if (init_philo(data, &data->philo_list[i]) == 0)
+		{
+			destroy_fork(data->someoneide);
+			free_philos(data->philo_list, i);
+			return (0);
+		}
+		if (pthread_create(&data->philo_list[i].philo_tid,
+				NULL, &philo_routin, &data->philo_list[i]) != 0)
+		{
+			destroy_fork(data->someoneide);
+			free_philos(data->philo_list, i + 1);
+			return (0);
+		}
+		i++;
 	}
+	return (1);
 }

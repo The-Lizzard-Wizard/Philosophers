@@ -1,14 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   utilse.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/08 16:27:29 by ********          #+#    #+#             */
-/*   Updated: 2025/04/26 14:54:10 by gchauvet         ###   ########.fr       */
+/*   Created: 2024/11/08 16:27:29 by gchauvet          #+#    #+#             */
+/*   Updated: 2025/08/19 13:57:13 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "../inc/philosophers.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <unistd.h>
+
+int	is_die(t_philo *philo)
+{
+	if (philo->nb_eat >= philo->max_eat)
+		return (TRUE);
+	pthread_mutex_lock(&philo->thefork->mutex);
+	if (philo->thefork->flag == TRUE)
+	{
+		pthread_mutex_unlock(&philo->thefork->mutex);
+		return (TRUE);
+	}
+	pthread_mutex_unlock(&philo->thefork->mutex);
+	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
+	{
+		pthread_mutex_lock(&philo->thefork->mutex);
+		philo->thefork->flag = TRUE;
+		pthread_mutex_unlock(&philo->thefork->mutex);
+		print_status(philo, "died");
+		return (TRUE);
+	}
+	return (FALSE);
+}
+
+void	print_status(t_philo *philo, char *ms)
+{
+	printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
+}
 
 static int	calculate_number(const char *nptr, int n, int i)
 {

@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:07 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/18 11:12:13 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/18 17:19:50 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ long int	get_time(long int first_milisec)
 
 int	start_philo(t_data *data)
 {
-	init_table(data);
-	return (0);
+	if (init_table(data) == 0)
+		return (0);
+	return (1);
 }
 
 int	stop_philo(t_data *data)
@@ -36,12 +37,17 @@ int	stop_philo(t_data *data)
 	unsigned int	i;
 
 	i = 0;
-	while (i < data->nb_philo)
+	if (data->philo_list)
 	{
-		pthread_join(data->philo_list[i].philo_tid, NULL);
-		i++;
+		while (i < data->nb_philo)
+		{
+			pthread_join(data->philo_list[i].philo_tid, NULL);
+			i++;
+		}
+		free_philos(data->philo_list, data->nb_philo);
 	}
-	return (0);
+	destroy_fork(data->someoneide);
+	return (1);
 }
 
 int	main(int argc, char **argv)
@@ -49,13 +55,14 @@ int	main(int argc, char **argv)
 {
 	t_data	*data;
 
-	if (argc != 5)
+	if (argc != 6)
 		return (EXIT_FAILURE);
 	data = malloc(sizeof(t_data));
 	if (!data)
 		return (EXIT_FAILURE);
 	pars(argv, data);
-	start_philo(data);
-	stop_philo(data);
+	if (start_philo(data) == 1)
+		stop_philo(data);
+	free(data);
 	return (EXIT_SUCCESS);
 }

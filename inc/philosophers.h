@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:09 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/18 11:29:46 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/19 13:57:56 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ typedef struct s_fork
 typedef struct s_philo
 {
 	int				id;
-	int				is_sleep;
-	int				is_eating;
-	int				is_thinking;
+	int				have_fork;
+	unsigned int	max_eat;
+	unsigned int	nb_eat;
 	unsigned int	nb_philo;
 	long int		time_to_die;
 	long int		time_to_sleep;
@@ -44,16 +44,11 @@ typedef struct s_philo
 	long int		last_eat;
 }	t_philo;
 
-typedef struct s_table
-{
-	t_philo	*philo;
-}	t_table;
-
 typedef struct s_data
 {
-	t_table			*table;
 	t_philo			*philo_list;
 	unsigned int	nb_philo;
+	unsigned int	nb_eat;
 	long int		time_to_die;
 	long int		time_to_sleep;
 	long int		time_to_eat;
@@ -63,9 +58,13 @@ typedef struct s_data
 
 int			ft_atoi(const char *nptr);
 void		*philo_routin(void *philo);
-void		init_philo(t_data *data, t_philo *philo);
-void		init_table(t_data *data);
+int			init_philo(t_data *data, t_philo *philo);
+int			init_table(t_data *data);
 void		pars(char **argv, t_data *data);
 long int	get_time(long int first_milisec);
+void		destroy_fork(t_fork *fork);
+void		free_philos(t_philo *philo_list, int nb_philo);
+int			is_die(t_philo *philo);
+void		print_status(t_philo *philo, char *ms);
 
 #endif

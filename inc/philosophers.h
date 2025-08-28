@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:09 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/19 13:57:56 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/28 13:54:53 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # define TRUE 1
 # define FALSE 2
 
-# define START_DEL 10
+# define START_DEL 1000
 
 typedef struct s_fork
 {
@@ -42,6 +42,7 @@ typedef struct s_philo
 	long int		first_milisec;
 	t_fork			*thefork;
 	long int		last_eat;
+	t_fork			*can_draw;
 }	t_philo;
 
 typedef struct s_data
@@ -53,7 +54,8 @@ typedef struct s_data
 	long int		time_to_sleep;
 	long int		time_to_eat;
 	long int		first_milisec;
-	t_fork			*someoneide;
+	t_fork			*someonedie;
+	t_fork			*can_draw;
 }	t_data;
 
 int			ft_atoi(const char *nptr);
@@ -66,5 +68,6 @@ void		destroy_fork(t_fork *fork);
 void		free_philos(t_philo *philo_list, int nb_philo);
 int			is_die(t_philo *philo);
 void		print_status(t_philo *philo, char *ms);
+void		drop_fork(t_philo *philo);
 
 #endif

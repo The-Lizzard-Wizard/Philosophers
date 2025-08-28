@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 15:42:07 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/18 17:19:50 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/19 14:14:36 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	stop_philo(t_data *data)
 		}
 		free_philos(data->philo_list, data->nb_philo);
 	}
-	destroy_fork(data->someoneide);
+	destroy_fork(data->someonedie);
 	return (1);
 }
 

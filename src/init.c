@@ -6,7 +6,7 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/31 10:46:36 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/19 13:55:01 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/08/28 13:47:12 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,10 @@ int	init_philo(t_data *data, t_philo *philo)
 	philo->time_to_eat = data->time_to_eat;
 	philo->time_to_sleep = data->time_to_sleep;
 	philo->first_milisec = data->first_milisec;
+	philo->can_draw = data->can_draw;
 	philo->fork_right = NULL;
 	philo->last_eat = 0;
-	philo->thefork = data->someoneide;
+	philo->thefork = data->someonedie;
 	if (init_philo_fork(data, philo) == 0)
 		return (0);
 	return (1);
@@ -58,23 +59,23 @@ int	init_philo(t_data *data, t_philo *philo)
 
 int	init_table_2(t_data *data)
 {
-	data->first_milisec = get_time(0);
+	data->first_milisec = get_time(0) + START_DEL;
 	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo_list)
 		return (0);
-	data->someoneide = malloc(sizeof(t_fork));
-	if (!data->someoneide)
-	{
-		free(data->philo_list);
-		return (0);
-	}
-	if (pthread_mutex_init(&data->someoneide->mutex, NULL) != 0)
-	{
-		free(data->philo_list);
-		free(data->someoneide);
-		return (0);
-	}
-	data->someoneide->flag = FALSE;
+	data->someonedie = malloc(sizeof(t_fork));
+	if (!data->someonedie)
+		return (free(data->philo_list), 0);
+	data->can_draw = malloc(sizeof(t_fork));
+	if (!data->can_draw)
+		return (free(data->philo_list), free(data->someonedie), 0);
+	if (pthread_mutex_init(&data->someonedie->mutex, NULL) != 0)
+		return (free(data->someonedie), free(data->philo_list), 0);
+	if (pthread_mutex_init(&data->can_draw->mutex, NULL) != 0)
+		return (free(data->can_draw),
+			free(data->someonedie), free(data->philo_list), 0);
+	data->someonedie->flag = FALSE;
+	data->can_draw->flag = FALSE;
 	return (1);
 }
 
@@ -90,14 +91,14 @@ int	init_table(t_data *data)
 		data->philo_list[i].id = i + 1;
 		if (init_philo(data, &data->philo_list[i]) == 0)
 		{
-			destroy_fork(data->someoneide);
+			destroy_fork(data->someonedie);
 			free_philos(data->philo_list, i);
 			return (0);
 		}
 		if (pthread_create(&data->philo_list[i].philo_tid,
 				NULL, &philo_routin, &data->philo_list[i]) != 0)
 		{
-			destroy_fork(data->someoneide);
+			destroy_fork(data->someonedie);
 			free_philos(data->philo_list, i + 1);
 			return (0);
 		}

@@ -16,27 +16,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	thread_wait(long int milisec, t_philo *philo, int candie)
+void	thread_wait(long int milisec)
 {
 	long int	end_sleep;
 
-	(void)candie;
-	(void)philo;
 	end_sleep = get_time(0) + milisec;
 	while (get_time(0) < end_sleep)
 	{
-		if (candie && is_die(philo) == TRUE)
-		{
-			drop_fork(philo);
-			break ;
-		}
 		usleep(500);
 	}
 }
 
 void	take_fork(t_philo *philo)
 {
-	while (philo->have_fork < 2 && is_die(philo) == FALSE)
+	while (philo->have_fork < 2)
 	{
 		pthread_mutex_lock(&philo->fork_left->mutex);
 		if (philo->fork_left->flag == FALSE)
@@ -59,7 +52,7 @@ void	take_fork(t_philo *philo)
 
 void	drop_fork(t_philo *philo)
 {
-	while (philo->have_fork >= 1 && is_die(philo) == FALSE)
+	while (philo->have_fork >= 1)
 	{
 		pthread_mutex_lock(&philo->fork_left->mutex);
 		if (philo->fork_left->flag == TRUE)
@@ -81,44 +74,31 @@ void	drop_fork(t_philo *philo)
 void	philo_eat(t_philo *philo)
 {
 	take_fork(philo);
-	// if (is_die(philo) == TRUE)
-	// {
-	// 	drop_fork(philo);
-	// 	return ;
-	// }
 	print_status(philo, "is eating");
 	philo->nb_eat++;
 	philo->last_eat = get_time(philo->first_milisec);
-	thread_wait(philo->time_to_eat, philo, 1);
-	// if (is_die(philo) == TRUE)
-	// {
-	// 	drop_fork(philo);
-	// 	return ;
-	// }
+	thread_wait(philo->time_to_eat);
 	print_status(philo, "is sleeping");
 	drop_fork(philo);
-	thread_wait(philo->time_to_sleep, philo, 1);
+	thread_wait(philo->time_to_sleep);
 }
 
 void	*philo_routin(void *data)
 {
-	pthread_t	self_tid;
 	t_philo		*philo;
 	int			start;
 
 	start = 0;
 	philo = (t_philo *)data;
-	self_tid = pthread_self();
 	while (get_time(0) < philo->first_milisec)
-		usleep(500);
-	//philo->first_milisec = get_time(0);
-	while (is_die(philo) == FALSE)
+		usleep(START_DEL);
+	while (is_run(philo))
 	{
 		print_status(philo, "is thinking");
 		if (start == 0)
 		{
 			if (philo->id % 2 == 1)
-				thread_wait(philo->time_to_die / 3, philo, 1);
+				thread_wait(10);
 			start = 1;
 		}
 		philo_eat(philo);

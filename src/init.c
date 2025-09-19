@@ -51,7 +51,7 @@ int	init_philo(t_data *data, t_philo *philo)
 	philo->can_draw = data->can_draw;
 	philo->fork_right = NULL;
 	philo->last_eat = 0;
-	philo->thefork = data->someonedie;
+	philo->run = data->run;
 	if (init_philo_fork(data, philo) == 0)
 		return (0);
 	return (1);
@@ -63,18 +63,19 @@ int	init_table_2(t_data *data)
 	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo_list)
 		return (0);
-	data->someonedie = malloc(sizeof(t_fork));
-	if (!data->someonedie)
+	data->run = malloc(sizeof(t_fork));
+	if (!data->run)
 		return (free(data->philo_list), 0);
+	data->run->flag = 1;
 	data->can_draw = malloc(sizeof(t_fork));
 	if (!data->can_draw)
-		return (free(data->philo_list), free(data->someonedie), 0);
-	if (pthread_mutex_init(&data->someonedie->mutex, NULL) != 0)
-		return (free(data->someonedie), free(data->philo_list), 0);
+		return (free(data->philo_list), free(data->run), 0);
+	if (pthread_mutex_init(&data->run->mutex, NULL) != 0)
+		return (free(data->run), free(data->philo_list), 0);
 	if (pthread_mutex_init(&data->can_draw->mutex, NULL) != 0)
 		return (free(data->can_draw),
-			free(data->someonedie), free(data->philo_list), 0);
-	data->someonedie->flag = FALSE;
+			free(data->run), free(data->philo_list), 0);
+	data->run->flag = FALSE;
 	data->can_draw->flag = FALSE;
 	return (1);
 }
@@ -91,14 +92,14 @@ int	init_table(t_data *data)
 		data->philo_list[i].id = i + 1;
 		if (init_philo(data, &data->philo_list[i]) == 0)
 		{
-			destroy_fork(data->someonedie);
+			destroy_fork(data->run);
 			free_philos(data->philo_list, i);
 			return (0);
 		}
 		if (pthread_create(&data->philo_list[i].philo_tid,
 				NULL, &philo_routin, &data->philo_list[i]) != 0)
 		{
-			destroy_fork(data->someonedie);
+			destroy_fork(data->run);
 			free_philos(data->philo_list, i + 1);
 			return (0);
 		}

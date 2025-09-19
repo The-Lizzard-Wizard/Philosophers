@@ -16,40 +16,42 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int	is_die(t_philo *philo)
+void	set_mutex_value(t_fork *fork, int value)
 {
-	if (philo->nb_eat >= philo->max_eat)
-		return (TRUE);
-	pthread_mutex_lock(&philo->thefork->mutex);
-	if (philo->thefork->flag == TRUE)
-	{
-		pthread_mutex_unlock(&philo->thefork->mutex);
-		return (TRUE);
-	}
-	pthread_mutex_unlock(&philo->thefork->mutex);
-	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
-	{
-		print_status(philo, "died");
-		pthread_mutex_lock(&philo->thefork->mutex);
-		philo->thefork->flag = TRUE;
-		pthread_mutex_unlock(&philo->thefork->mutex);
-		return (TRUE);
-	}
-	return (FALSE);
+	pthread_mutex_lock(&fork->mutex);
+	fork->flag = value;
+	pthread_mutex_unlock(&fork->mutex);
+}
+
+int	is_run(t_philo *data)
+{
+	int	flag;
+
+	flag = 1;
+	pthread_mutex_lock(&data->run->mutex);
+	if (data->run->flag == TRUE)
+		flag = 0;
+	pthread_mutex_unlock(&data->run->mutex);
+	return (flag);
+}
+
+int	is_draw(t_philo *data)
+{
+	int	flag;
+
+	flag = 1;
+	pthread_mutex_lock(&data->can_draw->mutex);
+	if (data->can_draw->flag == TRUE)
+		flag = 0;
+	pthread_mutex_unlock(&data->can_draw->mutex);
+	return (flag);
 }
 
 void	print_status(t_philo *philo, char *ms)
 {
 	pthread_mutex_lock(&philo->can_draw->mutex);
-	pthread_mutex_lock(&philo->thefork->mutex);
-	if (philo->thefork->flag == TRUE)
-	{
-		pthread_mutex_unlock(&philo->thefork->mutex);
-		pthread_mutex_unlock(&philo->can_draw->mutex);
-		return ;
-	}
-	pthread_mutex_unlock(&philo->thefork->mutex);
-	printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
+	if (is_run(philo))
+		printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
 	pthread_mutex_unlock(&philo->can_draw->mutex);
 }
 

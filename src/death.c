@@ -1,34 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   death.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/18 11:37:33 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/18 16:25:41 by gchauvet         ###   ########.fr       */
+/*   Created: 2025/09/19 02:32:54 by gchauvet          #+#    #+#             */
+/*   Updated: 2025/09/19 02:32:54 by gchauvet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/philosophers.h"
-#include <pthread.h>
-#include <stdlib.h>
-
-void	free_philos(t_philo *philo_list, int nb_philo)
+int	is_die(t_philo *philo)
 {
-	int	index;
-
-	index = 0;
-	while (index <= nb_philo - 1)
+	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
 	{
-		destroy_fork(philo_list[index].fork_left);
-		index++;
+		print_status(philo, "died");
+		set_mutex_value(philo->run, TRUE)
+		return (TRUE);
 	}
-	free(philo_list);
+	return (FALSE);
 }
 
-void	destroy_fork(t_fork *fork)
+void	*death_routin(t_data *data)
 {
-	pthread_mutex_destroy(&fork->mutex);
-	free(fork);
+	unsigned int	i;
+	i = 0;
+	while (i < data->nb_philo)
+	{
+		
+		i++;
+	}
 }

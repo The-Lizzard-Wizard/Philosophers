@@ -46,7 +46,7 @@ int	stop_philo(t_data *data)
 		}
 		free_philos(data->philo_list, data->nb_philo);
 	}
-	destroy_fork(data->someonedie);
+	destroy_fork(data->run);
 	return (1);
 }
 

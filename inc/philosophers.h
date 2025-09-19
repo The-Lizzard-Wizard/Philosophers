@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/18 15:42:09 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/08/28 13:54:53 by gchauvet         ###   ########.fr       */
+/*   Created: 2025/09/19 02:32:36 by gchauvet          #+#    #+#             */
+/*   Updated: 2025/09/19 02:32:36 by gchauvet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct s_philo
 	t_fork			*fork_left;
 	t_fork			*fork_right;
 	long int		first_milisec;
-	t_fork			*thefork;
+	t_fork			*run;
 	long int		last_eat;
 	t_fork			*can_draw;
 }	t_philo;
@@ -48,16 +48,19 @@ typedef struct s_philo
 typedef struct s_data
 {
 	t_philo			*philo_list;
+	pthread_t		death_tid;
 	unsigned int	nb_philo;
 	unsigned int	nb_eat;
 	long int		time_to_die;
 	long int		time_to_sleep;
 	long int		time_to_eat;
 	long int		first_milisec;
-	t_fork			*someonedie;
+	t_fork			*run;
 	t_fork			*can_draw;
 }	t_data;
 
+void		set_mutex_value(t_fork *fork, int value);
+int			is_run(t_philo *data);
 int			ft_atoi(const char *nptr);
 void		*philo_routin(void *philo);
 int			init_philo(t_data *data, t_philo *philo);

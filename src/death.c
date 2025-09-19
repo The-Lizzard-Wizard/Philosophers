@@ -10,24 +10,39 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../inc/philosophers.h"
+#include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 int	is_die(t_philo *philo)
 {
 	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
 	{
 		print_status(philo, "died");
-		set_mutex_value(philo->run, TRUE)
+		set_mutex_value(philo->run, TRUE);
 		return (TRUE);
 	}
 	return (FALSE);
 }
 
-void	*death_routin(t_data *data)
+void	*death_routin(void *pdata)
 {
 	unsigned int	i;
-	i = 0;
-	while (i < data->nb_philo)
+	t_data 			*data;
+
+	data = (t_data *)pdata;
+	while (get_time(0) < data->first_milisec)
+		usleep(5);
+	while (is_run(data->run))
 	{
-		
-		i++;
+		i = 0;
+		while (i < data->nb_philo)
+		{
+			is_die(&data->philo_list[i]);
+			i++;
+		}
 	}
+	return (NULL);
 }

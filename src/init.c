@@ -105,5 +105,7 @@ int	init_table(t_data *data)
 		}
 		i++;
 	}
+	if (pthread_create(&data->death_tid, NULL, &death_routin, data) != 0)
+		return (0);
 	return (1);
 }

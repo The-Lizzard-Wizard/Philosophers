@@ -91,8 +91,8 @@ void	*philo_routin(void *data)
 	start = 0;
 	philo = (t_philo *)data;
 	while (get_time(0) < philo->first_milisec)
-		usleep(START_DEL);
-	while (is_run(philo))
+		usleep(5);
+	while (is_run(philo->run))
 	{
 		print_status(philo, "is thinking");
 		if (start == 0)

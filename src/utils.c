@@ -23,35 +23,27 @@ void	set_mutex_value(t_fork *fork, int value)
 	pthread_mutex_unlock(&fork->mutex);
 }
 
-int	is_run(t_fork *data)
+int	is_true(t_fork *data)
 {
 	int	flag;
 
-	flag = 1;
+	flag = 0;
 	pthread_mutex_lock(&data->mutex);
 	if (data->flag == TRUE)
-		flag = 0;
+		flag = 1;
 	pthread_mutex_unlock(&data->mutex);
-	return (flag);
-}
-
-int	is_draw(t_philo *data)
-{
-	int	flag;
-
-	flag = 1;
-	pthread_mutex_lock(&data->can_draw->mutex);
-	if (data->can_draw->flag == TRUE)
-		flag = 0;
-	pthread_mutex_unlock(&data->can_draw->mutex);
 	return (flag);
 }
 
 void	print_status(t_philo *philo, char *ms)
 {
 	pthread_mutex_lock(&philo->can_draw->mutex);
-	if (is_run(philo->run))
-		printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
+	if (!is_true(philo->run))
+	{
+		pthread_mutex_unlock(&philo->can_draw->mutex);
+		return ;
+	}
+	printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
 	pthread_mutex_unlock(&philo->can_draw->mutex);
 }
 

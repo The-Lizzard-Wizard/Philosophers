@@ -29,45 +29,43 @@ void	thread_wait(long int milisec)
 
 void	take_fork(t_philo *philo)
 {
-	while (philo->have_fork < 2)
+	while (1)
 	{
-		pthread_mutex_lock(&philo->fork_left->mutex);
-		if (philo->fork_left->flag == FALSE)
+		if (!is_true(philo->fork_left))
 		{
+			set_mutex_value(philo->fork_left, TRUE);
 			print_status(philo, "has taken a fork");
-			philo->fork_left->flag = TRUE;
 			philo->have_fork++;
 		}
-		pthread_mutex_unlock(&philo->fork_left->mutex);
-		pthread_mutex_lock(&philo->fork_right->mutex);
-		if (philo->fork_right->flag == FALSE)
+		if (!is_true(philo->fork_right))
 		{
+			set_mutex_value(philo->fork_right, TRUE);
 			print_status(philo, "has taken a fork");
-			philo->fork_right->flag = TRUE;
 			philo->have_fork++;
 		}
-		pthread_mutex_unlock(&philo->fork_right->mutex);
+		if (philo->have_fork == 2)
+			break ;
+		usleep(100);
 	}
 }
 
 void	drop_fork(t_philo *philo)
 {
-	while (philo->have_fork >= 1)
+	while (1)
 	{
-		pthread_mutex_lock(&philo->fork_left->mutex);
-		if (philo->fork_left->flag == TRUE)
+		if (is_true(philo->fork_left))
 		{
-			philo->fork_left->flag = FALSE;
+			set_mutex_value(philo->fork_left, FALSE);
 			philo->have_fork--;
 		}
-		pthread_mutex_unlock(&philo->fork_left->mutex);
-		pthread_mutex_lock(&philo->fork_right->mutex);
-		if (philo->fork_right->flag == TRUE)
+		if (!is_true(philo->fork_right))
 		{
-			philo->fork_right->flag = FALSE;
+			set_mutex_value(philo->fork_right, FALSE);
 			philo->have_fork--;
 		}
-		pthread_mutex_unlock(&philo->fork_right->mutex);
+		if (philo->have_fork == 0)
+			break ;
+		usleep(100);
 	}
 }
 
@@ -91,8 +89,8 @@ void	*philo_routin(void *data)
 	start = 0;
 	philo = (t_philo *)data;
 	while (get_time(0) < philo->first_milisec)
-		usleep(5);
-	while (is_run(philo->run))
+		usleep(100);
+	while (is_true(philo->run))
 	{
 		print_status(philo, "is thinking");
 		if (start == 0)
@@ -102,6 +100,7 @@ void	*philo_routin(void *data)
 			start = 1;
 		}
 		philo_eat(philo);
+		usleep(100);
 	}
 	return (NULL);
 }

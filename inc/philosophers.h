@@ -18,7 +18,7 @@
 # define TRUE 1
 # define FALSE 2
 
-# define START_DEL 1000
+# define START_DEL 10
 
 typedef struct s_fork
 {
@@ -61,7 +61,7 @@ typedef struct s_data
 
 void		set_mutex_value(t_fork *fork, int value);
 void		*death_routin(void *pdata);
-int			is_run(t_fork *data);
+int			is_true(t_fork *data);
 int			ft_atoi(const char *nptr);
 void		*philo_routin(void *philo);
 int			init_philo(t_data *data, t_philo *philo);

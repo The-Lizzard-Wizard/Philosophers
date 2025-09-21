@@ -59,7 +59,7 @@ int	init_philo(t_data *data, t_philo *philo)
 
 int	init_table_2(t_data *data)
 {
-	data->first_milisec = get_time(0) + START_DEL;
+	data->first_milisec = get_time(0) + (data->nb_philo * 2 * 10);
 	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo_list)
 		return (0);
@@ -75,8 +75,8 @@ int	init_table_2(t_data *data)
 	if (pthread_mutex_init(&data->can_draw->mutex, NULL) != 0)
 		return (free(data->can_draw),
 			free(data->run), free(data->philo_list), 0);
-	data->run->flag = FALSE;
-	data->can_draw->flag = FALSE;
+	data->run->flag = TRUE;
+	data->can_draw->flag = TRUE;
 	return (1);
 }
 
@@ -87,6 +87,8 @@ int	init_table(t_data *data)
 	if (init_table_2(data) == 0)
 		return (0);
 	i = 0;
+	if (pthread_create(&data->death_tid, NULL, &death_routin, data) != 0)
+		return (0);
 	while (i < data->nb_philo)
 	{
 		data->philo_list[i].id = i + 1;
@@ -105,7 +107,5 @@ int	init_table(t_data *data)
 		}
 		i++;
 	}
-	if (pthread_create(&data->death_tid, NULL, &death_routin, data) != 0)
-		return (0);
 	return (1);
 }

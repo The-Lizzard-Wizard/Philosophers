@@ -21,7 +21,8 @@ int	is_die(t_philo *philo)
 	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
 	{
 		print_status(philo, "died");
-		set_mutex_value(philo->run, TRUE);
+		drop_fork(philo);
+		set_mutex_value(philo->run, FALSE);
 		return (TRUE);
 	}
 	return (FALSE);
@@ -34,8 +35,8 @@ void	*death_routin(void *pdata)
 
 	data = (t_data *)pdata;
 	while (get_time(0) < data->first_milisec)
-		usleep(5);
-	while (is_run(data->run))
+		usleep(100);
+	while (is_true(data->run))
 	{
 		i = 0;
 		while (i < data->nb_philo)
@@ -43,6 +44,7 @@ void	*death_routin(void *pdata)
 			is_die(&data->philo_list[i]);
 			i++;
 		}
+		usleep(100);
 	}
 	return (NULL);
 }

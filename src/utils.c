@@ -16,6 +16,17 @@
 #include <stdio.h>
 #include <unistd.h>
 
+void	switch_mutex_value(t_fork *fork, int value, t_philo *philo, char *ms)
+{
+	pthread_mutex_lock(&fork->mutex);
+	if (fork->flag != value)
+	{
+		print_status(philo, ms);
+		fork->flag = value;
+	}
+	pthread_mutex_unlock(&fork->mutex);
+}
+
 void	set_mutex_value(t_fork *fork, int value)
 {
 	pthread_mutex_lock(&fork->mutex);

@@ -31,18 +31,46 @@ void	take_fork(t_philo *philo)
 {
 	while (1)
 	{
-		if (!is_true(philo->fork_left))
-		{
-			set_mutex_value(philo->fork_left, TRUE);
-			print_status(philo, "has taken a fork");
-			philo->have_fork++;
-		}
-		if (!is_true(philo->fork_right))
-		{
-			set_mutex_value(philo->fork_right, TRUE);
-			print_status(philo, "has taken a fork");
-			philo->have_fork++;
-		}
+		if (philo->id % 2 == 0)
+        {
+            pthread_mutex_lock(&philo->fork_left->mutex);
+            if (philo->fork_left->flag == FALSE)
+            {
+                philo->fork_left->flag = TRUE;
+                print_status(philo, "has taken a fork");
+                philo->have_fork++;
+            }
+            pthread_mutex_unlock(&philo->fork_left->mutex);
+
+            pthread_mutex_lock(&philo->fork_right->mutex);
+            if (philo->fork_right->flag == FALSE)
+            {
+                philo->fork_right->flag = TRUE;
+                print_status(philo, "has taken a fork");
+                philo->have_fork++;
+            }
+            pthread_mutex_unlock(&philo->fork_right->mutex);
+        }
+        else
+        {
+            pthread_mutex_lock(&philo->fork_right->mutex);
+            if (philo->fork_right->flag == FALSE)
+            {
+                philo->fork_right->flag = TRUE;
+                print_status(philo, "has taken a fork");
+                philo->have_fork++;
+            }
+            pthread_mutex_unlock(&philo->fork_right->mutex);
+
+            pthread_mutex_lock(&philo->fork_left->mutex);
+            if (philo->fork_left->flag == FALSE)
+            {
+                philo->fork_left->flag = TRUE;
+                print_status(philo, "has taken a fork");
+                philo->have_fork++;
+            }
+            pthread_mutex_unlock(&philo->fork_left->mutex);
+        }
 		if (philo->have_fork == 2)
 			break ;
 		usleep(100);
@@ -51,22 +79,46 @@ void	take_fork(t_philo *philo)
 
 void	drop_fork(t_philo *philo)
 {
-	while (1)
-	{
-		if (is_true(philo->fork_left))
-		{
-			set_mutex_value(philo->fork_left, FALSE);
-			philo->have_fork--;
-		}
-		if (!is_true(philo->fork_right))
-		{
-			set_mutex_value(philo->fork_right, FALSE);
-			philo->have_fork--;
-		}
-		if (philo->have_fork == 0)
-			break ;
-		usleep(100);
-	}
+	if (philo->id % 2 == 0)
+    {
+        // Lâcher d’abord la gauche
+        pthread_mutex_lock(&philo->fork_left->mutex);
+        if (philo->fork_left->flag == TRUE)
+        {
+            philo->fork_left->flag = FALSE;
+            philo->have_fork--;
+        }
+        pthread_mutex_unlock(&philo->fork_left->mutex);
+
+        // Puis la droite
+        pthread_mutex_lock(&philo->fork_right->mutex);
+        if (philo->fork_right->flag == TRUE)
+        {
+            philo->fork_right->flag = FALSE;
+            philo->have_fork--;
+        }
+        pthread_mutex_unlock(&philo->fork_right->mutex);
+    }
+    else
+    {
+        // Lâcher d’abord la droite
+        pthread_mutex_lock(&philo->fork_right->mutex);
+        if (philo->fork_right->flag == TRUE)
+        {
+            philo->fork_right->flag = FALSE;
+            philo->have_fork--;
+        }
+        pthread_mutex_unlock(&philo->fork_right->mutex);
+
+        // Puis la gauche
+        pthread_mutex_lock(&philo->fork_left->mutex);
+        if (philo->fork_left->flag == TRUE)
+        {
+            philo->fork_left->flag = FALSE;
+            philo->have_fork--;
+        }
+        pthread_mutex_unlock(&philo->fork_left->mutex);
+    }
 }
 
 void	philo_eat(t_philo *philo)
@@ -76,30 +128,25 @@ void	philo_eat(t_philo *philo)
 	philo->nb_eat++;
 	philo->last_eat = get_time(philo->first_milisec);
 	thread_wait(philo->time_to_eat);
-	print_status(philo, "is sleeping");
 	drop_fork(philo);
+	print_status(philo, "is sleeping");
 	thread_wait(philo->time_to_sleep);
 }
 
 void	*philo_routin(void *data)
 {
 	t_philo		*philo;
-	int			start;
 
-	start = 0;
 	philo = (t_philo *)data;
 	while (get_time(0) < philo->first_milisec)
 		usleep(100);
+	print_status(philo, "is thinking");
+	if (philo->id % 2 == 1)
+		thread_wait(10);
 	while (is_true(philo->run))
 	{
-		print_status(philo, "is thinking");
-		if (start == 0)
-		{
-			if (philo->id % 2 == 1)
-				thread_wait(10);
-			start = 1;
-		}
 		philo_eat(philo);
+		print_status(philo, "is thinking");
 		usleep(100);
 	}
 	return (NULL);

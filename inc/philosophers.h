@@ -59,6 +59,7 @@ typedef struct s_data
 	t_fork			*can_draw;
 }	t_data;
 
+void		switch_mutex_value(t_fork *fork, int value, t_philo *philo, char *ms);
 void		set_mutex_value(t_fork *fork, int value);
 void		*death_routin(void *pdata);
 int			is_true(t_fork *data);

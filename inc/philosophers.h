@@ -33,6 +33,8 @@ typedef struct s_philo
 	unsigned int	max_eat;
 	unsigned int	nb_eat;
 	unsigned int	nb_philo;
+	pthread_mutex_t	eat_count_mutex;
+	unsigned int	eat_count;
 	long int		time_to_die;
 	long int		time_to_sleep;
 	long int		time_to_eat;
@@ -59,6 +61,7 @@ typedef struct s_data
 	t_fork			*can_draw;
 }	t_data;
 
+void		thread_wait(long int milisec);
 void		switch_mutex_value(t_fork *fork, int value, t_philo *philo, char *ms);
 void		set_mutex_value(t_fork *fork, int value);
 void		*death_routin(void *pdata);

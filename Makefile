@@ -3,7 +3,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -pthread -g3
 SRC = philosophers.c utils.c \
 	init.c pars.c thread.c free.c \
-	death.c
+	death.c atoi.c
 DEPS = inc/philosophers.h
 ODIR = obj/
 OBJ = $(SRC:%.c=$(ODIR)%.o)

@@ -16,15 +16,15 @@
 #include <stdio.h>
 #include <unistd.h>
 
-void	switch_mutex_value(t_fork *fork, int value, t_philo *philo, char *ms)
+void	thread_wait(long int milisec)
 {
-	pthread_mutex_lock(&fork->mutex);
-	if (fork->flag != value)
+	long int	end_sleep;
+
+	end_sleep = get_time(0) + milisec;
+	while (get_time(0) < end_sleep)
 	{
-		print_status(philo, ms);
-		fork->flag = value;
+		usleep(500);
 	}
-	pthread_mutex_unlock(&fork->mutex);
 }
 
 void	set_mutex_value(t_fork *fork, int value)
@@ -56,40 +56,4 @@ void	print_status(t_philo *philo, char *ms)
 	}
 	printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
 	pthread_mutex_unlock(&philo->can_draw->mutex);
-}
-
-static int	calculate_number(const char *nptr, int n, int i)
-{
-	while (nptr[i] >= '0' && nptr[i] <= '9')
-	{
-		n = n * 10 + (nptr[i] - '0');
-		i++;
-	}
-	return (n);
-}
-
-int	ft_atoi(const char *nptr)
-{
-	int	i;
-	int	s;
-	int	n;
-	int	s2;
-
-	i = 0;
-	n = 0;
-	s = 1;
-	s2 = 0;
-	while (nptr[i] == ' ' || (nptr[i] >= 9 && nptr[i] <= 13))
-		i++;
-	if (nptr[i] == '+' || nptr[i] == '-')
-	{
-		if (nptr[i] == '-')
-			s = s * -1;
-		i++;
-		s2++;
-	}
-	if (s2 >= 2)
-		return (0);
-	n = calculate_number(nptr, n, i);
-	return (n * s);
 }

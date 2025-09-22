@@ -47,11 +47,13 @@ int	init_philo(t_data *data, t_philo *philo)
 	philo->time_to_die = data->time_to_die;
 	philo->time_to_eat = data->time_to_eat;
 	philo->time_to_sleep = data->time_to_sleep;
+	philo->eat_count = 0;
 	philo->first_milisec = data->first_milisec;
 	philo->can_draw = data->can_draw;
 	philo->fork_right = NULL;
 	philo->last_eat = 0;
 	philo->run = data->run;
+	pthread_mutex_init(&philo->eat_count_mutex, NULL);
 	if (init_philo_fork(data, philo) == 0)
 		return (0);
 	return (1);

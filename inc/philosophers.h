@@ -61,6 +61,9 @@ typedef struct s_data
 	t_fork			*can_draw;
 }	t_data;
 
+int			double_free(void *ptr1, void *ptr2);
+int			triple_free(void *ptr1, void *ptr2, void *ptr3);
+int			quadruple_free(void *ptr1, void *ptr2, void *ptr3, void *ptr4);
 void		thread_wait(long int milisec);
 void		switch_mutex_value(t_fork *fork, int value, t_philo *philo, char *ms);
 void		set_mutex_value(t_fork *fork, int value);

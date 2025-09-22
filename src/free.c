@@ -32,3 +32,27 @@ void	destroy_fork(t_fork *fork)
 	pthread_mutex_destroy(&fork->mutex);
 	free(fork);
 }
+
+int	double_free(void *ptr1, void *ptr2)
+{
+	free(ptr1);
+	free(ptr2);
+	return (0);
+}
+
+int	triple_free(void *ptr1, void *ptr2, void *ptr3)
+{
+	free(ptr1);
+	free(ptr2);
+	free(ptr3);
+	return (0);
+}
+
+int	quadruple_free(void *ptr1, void *ptr2, void *ptr3, void *ptr4)
+{
+	free(ptr1);
+	free(ptr2);
+	free(ptr3);
+	free(ptr4);
+	return (0);
+}

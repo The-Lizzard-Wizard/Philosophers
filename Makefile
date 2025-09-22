@@ -1,9 +1,9 @@
 NAME = philosophers
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g3
+CFLAGS = -Wall -Wextra -Werror -g #-fsanitize=thread
 SRC = philosophers.c utils.c \
 	init.c pars.c thread.c free.c \
-	death.c atoi.c
+	death.c utils_2.c
 DEPS = inc/philosophers.h
 ODIR = obj/
 OBJ = $(SRC:%.c=$(ODIR)%.o)

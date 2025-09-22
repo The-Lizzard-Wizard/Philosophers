@@ -54,6 +54,7 @@ int	init_philo(t_data *data, t_philo *philo)
 	philo->last_eat = 0;
 	philo->run = data->run;
 	pthread_mutex_init(&philo->eat_count_mutex, NULL);
+	pthread_mutex_init(&philo->eat_update_mutex, NULL);
 	if (init_philo_fork(data, philo) == 0)
 		return (0);
 	return (1);

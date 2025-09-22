@@ -18,13 +18,16 @@
 
 int	is_die(t_philo *philo)
 {
+	pthread_mutex_lock(&philo->eat_update_mutex);
 	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
 	{
+		pthread_mutex_unlock(&philo->eat_update_mutex);
 		print_status(philo, "died");
 		drop_fork(philo);
 		set_mutex_value(philo->run, FALSE);
 		return (TRUE);
 	}
+	pthread_mutex_unlock(&philo->eat_update_mutex);
 	return (FALSE);
 }
 

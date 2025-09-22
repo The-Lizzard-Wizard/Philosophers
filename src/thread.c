@@ -94,7 +94,9 @@ void	philo_eat(t_philo *philo)
 	pthread_mutex_lock(&philo->eat_count_mutex);
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->eat_count_mutex);
+	pthread_mutex_lock(&philo->eat_update_mutex);
 	philo->last_eat = get_time(philo->first_milisec);
+	pthread_mutex_unlock(&philo->eat_update_mutex);
 	thread_wait(philo->time_to_eat);
 	drop_fork(philo);
 	print_status(philo, "is sleeping");

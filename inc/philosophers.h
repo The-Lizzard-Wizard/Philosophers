@@ -34,6 +34,7 @@ typedef struct s_philo
 	unsigned int	nb_eat;
 	unsigned int	nb_philo;
 	pthread_mutex_t	eat_count_mutex;
+	pthread_mutex_t	eat_update_mutex;
 	unsigned int	eat_count;
 	long int		time_to_die;
 	long int		time_to_sleep;

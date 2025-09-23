@@ -12,6 +12,7 @@
 
 #include "../inc/philosophers.h"
 #include <pthread.h>
+#include <stdio.h>
 
 void	pars(char **argv, t_data *data)
 {
@@ -19,5 +20,12 @@ void	pars(char **argv, t_data *data)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
-	data->nb_eat = ft_atoi(argv[5]);
+	if (argv[5])
+	{
+		data->eat_limite = TRUE;
+		data->nb_eat = ft_atoi(argv[5]);
+		printf("%u\n", data->nb_eat);
+	}
+	else
+		data->eat_limite = FALSE;
 }

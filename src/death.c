@@ -35,7 +35,7 @@ void	*death_routin(void *pdata)
 {
 	unsigned int	i;
 	unsigned int	food_ok;
-	t_data 			*data;
+	t_data			*data;
 
 	data = (t_data *)pdata;
 	while (get_time(0) < data->first_milisec)
@@ -53,8 +53,9 @@ void	*death_routin(void *pdata)
 			pthread_mutex_unlock(&data->philo_list[i].eat_count_mutex);
 			i++;
 		}
-		if (food_ok >= data->nb_philo)
-			set_mutex_value(data->run, FALSE);
+		if (data->eat_limite == TRUE)
+			if (food_ok >= data->nb_philo)
+				set_mutex_value(data->run, FALSE);
 		usleep(100);
 	}
 	return (NULL);

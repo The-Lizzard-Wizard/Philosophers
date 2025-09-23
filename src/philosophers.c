@@ -55,7 +55,7 @@ int	main(int argc, char **argv)
 {
 	t_data	*data;
 
-	if (argc != 6)
+	if (argc < 5 || argc > 6)
 		return (EXIT_FAILURE);
 	data = malloc(sizeof(t_data));
 	if (!data)

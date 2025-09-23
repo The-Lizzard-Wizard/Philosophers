@@ -18,6 +18,8 @@
 
 void	take_drop(t_fork *fork, t_philo *philo, int flag)
 {
+	if (!fork)
+		return ;
 	if (flag == 1)
 	{
 		if (fork->flag == FALSE)
@@ -59,7 +61,7 @@ void	take_fork(t_philo *philo)
 			take_drop(philo->fork_left, philo, 1);
 			pthread_mutex_unlock(&philo->fork_left->mutex);
 		}
-		if (philo->have_fork == 2)
+		if (is_true(philo->run) == 0 || philo->have_fork == 2)
 			break ;
 		usleep(100);
 	}

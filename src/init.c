@@ -21,6 +21,8 @@ int	init_philo_fork(t_data *data, t_philo *philo)
 {
 	int	nightbor_id;
 
+	philo->fork_left = NULL;
+	philo->fork_right = NULL;
 	nightbor_id = ((philo->id - 1) + data->nb_philo - 1) % data->nb_philo;
 	philo->fork_left = malloc(sizeof(t_fork));
 	if (!philo->fork_left)

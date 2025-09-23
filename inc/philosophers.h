@@ -58,6 +58,7 @@ typedef struct s_data
 	long int		time_to_sleep;
 	long int		time_to_eat;
 	long int		first_milisec;
+	int				eat_limite;
 	t_fork			*run;
 	t_fork			*can_draw;
 }	t_data;
@@ -66,7 +67,8 @@ int			double_free(void *ptr1, void *ptr2);
 int			triple_free(void *ptr1, void *ptr2, void *ptr3);
 int			quadruple_free(void *ptr1, void *ptr2, void *ptr3, void *ptr4);
 void		thread_wait(long int milisec);
-void		switch_mutex_value(t_fork *fork, int value, t_philo *philo, char *ms);
+void		switch_mutex_value(t_fork *fork, int value,
+				t_philo *philo, char *ms);
 void		set_mutex_value(t_fork *fork, int value);
 void		*death_routin(void *pdata);
 int			is_true(t_fork *data);

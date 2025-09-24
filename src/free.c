@@ -21,13 +21,23 @@ void	free_philos(t_philo *philo_list, int nb_philo)
 	index = 0;
 	while (index <= nb_philo - 1)
 	{
-		destroy_fork(philo_list[index].fork_left);
+		destroy_protect_flag(philo_list[index].fork_left);
+		pthread_mutex_destroy(&philo_list[index].eat_count_mutex);
+		pthread_mutex_destroy(&philo_list[index].eat_update_mutex);
 		index++;
 	}
 	free(philo_list);
 }
 
-void	destroy_fork(t_fork *fork)
+int		free_data(t_data *data)
+{
+	destroy_protect_flag(data->run);
+	destroy_protect_flag(data->can_draw);
+	free(data);
+	return (0);
+}
+
+void	destroy_protect_flag(t_protect_flag *fork)
 {
 	pthread_mutex_destroy(&fork->mutex);
 	free(fork);

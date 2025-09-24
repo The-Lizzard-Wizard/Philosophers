@@ -24,7 +24,6 @@ void	pars(char **argv, t_data *data)
 	{
 		data->eat_limite = TRUE;
 		data->nb_eat = ft_atoi(argv[5]);
-		printf("%u\n", data->nb_eat);
 	}
 	else
 		data->eat_limite = FALSE;

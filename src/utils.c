@@ -27,14 +27,14 @@ void	thread_wait(long int milisec)
 	}
 }
 
-void	set_mutex_value(t_fork *fork, int value)
+void	set_mutex_value(t_protect_flag *fork, int value)
 {
 	pthread_mutex_lock(&fork->mutex);
 	fork->flag = value;
 	pthread_mutex_unlock(&fork->mutex);
 }
 
-int	is_true(t_fork *data)
+int	is_true(t_protect_flag *data)
 {
 	int	flag;
 
@@ -48,17 +48,19 @@ int	is_true(t_fork *data)
 
 void	print_status(t_philo *philo, char *ms)
 {
-	pthread_mutex_lock(&philo->can_draw->mutex);
 	pthread_mutex_lock(&philo->run->mutex);
 	if (philo->run->flag == FALSE)
 	{
 		pthread_mutex_unlock(&philo->run->mutex);
-		pthread_mutex_unlock(&philo->can_draw->mutex);
 		return ;
 	}
+	else
+	{
+		pthread_mutex_lock(&philo->can_draw->mutex);
+		pthread_mutex_lock(&philo->eat_update_mutex);
+		printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
+		pthread_mutex_unlock(&philo->eat_update_mutex);
+		pthread_mutex_unlock(&philo->can_draw->mutex);
+	}
 	pthread_mutex_unlock(&philo->run->mutex);
-	pthread_mutex_lock(&philo->eat_update_mutex);
-	printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
-	pthread_mutex_unlock(&philo->eat_update_mutex);
-	pthread_mutex_unlock(&philo->can_draw->mutex);
 }

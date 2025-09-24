@@ -16,17 +16,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	take_drop(t_fork *fork, t_philo *philo, int flag)
+void	take_drop(t_protect_flag *fork, t_philo *philo, int flag, int *have_fork)
 {
-	if (!fork)
-		return ;
 	if (flag == 1)
 	{
 		if (fork->flag == FALSE)
 		{
 			fork->flag = TRUE;
 			print_status(philo, "has taken a fork");
-			philo->have_fork++;
+			(*have_fork)++;
 		}
 	}
 	else if (flag == 2)
@@ -34,34 +32,25 @@ void	take_drop(t_fork *fork, t_philo *philo, int flag)
 		if (fork->flag == TRUE)
 		{
 			fork->flag = FALSE;
-			philo->have_fork--;
+			(*have_fork)--;
 		}
 	}
 }
 
 void	take_fork(t_philo *philo)
 {
+	int	have_fork;
+
+	have_fork = 0;
 	while (1)
 	{
-		if (philo->id % 2 == 0)
-		{
-			pthread_mutex_lock(&philo->fork_left->mutex);
-			take_drop(philo->fork_left, philo, 1);
-			pthread_mutex_unlock(&philo->fork_left->mutex);
-			pthread_mutex_lock(&philo->fork_right->mutex);
-			take_drop(philo->fork_right, philo, 1);
-			pthread_mutex_unlock(&philo->fork_right->mutex);
-		}
-		else
-		{
-			pthread_mutex_lock(&philo->fork_right->mutex);
-			take_drop(philo->fork_right, philo, 1);
-			pthread_mutex_unlock(&philo->fork_right->mutex);
-			pthread_mutex_lock(&philo->fork_left->mutex);
-			take_drop(philo->fork_left, philo, 1);
-			pthread_mutex_unlock(&philo->fork_left->mutex);
-		}
-		if (is_true(philo->run) == 0 || philo->have_fork == 2)
+		pthread_mutex_lock(&philo->fork_left->mutex);
+		take_drop(philo->fork_left, philo, 1, &have_fork);
+		pthread_mutex_unlock(&philo->fork_left->mutex);
+		pthread_mutex_lock(&philo->fork_right->mutex);
+		take_drop(philo->fork_right, philo, 1, &have_fork);
+		pthread_mutex_unlock(&philo->fork_right->mutex);
+		if (is_true(philo->run) == 0 || have_fork == 2)
 			break ;
 		usleep(100);
 	}
@@ -69,24 +58,15 @@ void	take_fork(t_philo *philo)
 
 void	drop_fork(t_philo *philo)
 {
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(&philo->fork_left->mutex);
-		take_drop(philo->fork_left, philo, 2);
-		pthread_mutex_unlock(&philo->fork_left->mutex);
-		pthread_mutex_lock(&philo->fork_right->mutex);
-		take_drop(philo->fork_right, philo, 2);
-		pthread_mutex_unlock(&philo->fork_right->mutex);
-	}
-	else
-	{
-		pthread_mutex_lock(&philo->fork_right->mutex);
-		take_drop(philo->fork_right, philo, 2);
-		pthread_mutex_unlock(&philo->fork_right->mutex);
-		pthread_mutex_lock(&philo->fork_left->mutex);
-		take_drop(philo->fork_left, philo, 2);
-		pthread_mutex_unlock(&philo->fork_left->mutex);
-	}
+	int	have_fork;
+
+	have_fork = 0;
+	pthread_mutex_lock(&philo->fork_left->mutex);
+	take_drop(philo->fork_left, philo, 2, &have_fork);
+	pthread_mutex_unlock(&philo->fork_left->mutex);
+	pthread_mutex_lock(&philo->fork_right->mutex);
+	take_drop(philo->fork_right, philo, 2, &have_fork);
+	pthread_mutex_unlock(&philo->fork_right->mutex);
 }
 
 void	philo_eat(t_philo *philo)

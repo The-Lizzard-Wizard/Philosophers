@@ -37,6 +37,7 @@ int	stop_philo(t_data *data)
 	unsigned int	i;
 
 	i = 0;
+	pthread_join(data->death_tid, NULL);
 	if (data->philo_list)
 	{
 		while (i < data->nb_philo)
@@ -46,7 +47,7 @@ int	stop_philo(t_data *data)
 		}
 		free_philos(data->philo_list, data->nb_philo);
 	}
-	destroy_fork(data->run);
+	free_data(data);
 	return (1);
 }
 
@@ -63,6 +64,5 @@ int	main(int argc, char **argv)
 	pars(argv, data);
 	if (start_philo(data) == 1)
 		stop_philo(data);
-	free(data);
 	return (EXIT_SUCCESS);
 }

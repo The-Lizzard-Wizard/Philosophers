@@ -20,11 +20,11 @@
 
 # define START_DEL 10
 
-typedef struct s_fork
+typedef struct s_protect_flag
 {
 	int				flag;
 	pthread_mutex_t	mutex;
-}	t_fork;
+}	t_protect_flag;
 
 typedef struct s_philo
 {
@@ -40,12 +40,12 @@ typedef struct s_philo
 	long int		time_to_sleep;
 	long int		time_to_eat;
 	pthread_t		philo_tid;
-	t_fork			*fork_left;
-	t_fork			*fork_right;
+	t_protect_flag	*fork_left;
+	t_protect_flag	*fork_right;
 	long int		first_milisec;
-	t_fork			*run;
+	t_protect_flag	*run;
 	long int		last_eat;
-	t_fork			*can_draw;
+	t_protect_flag	*can_draw;
 }	t_philo;
 
 typedef struct s_data
@@ -59,26 +59,27 @@ typedef struct s_data
 	long int		time_to_eat;
 	long int		first_milisec;
 	int				eat_limite;
-	t_fork			*run;
-	t_fork			*can_draw;
+	t_protect_flag	*run;
+	t_protect_flag	*can_draw;
 }	t_data;
 
+int			free_data(t_data *data);
 int			double_free(void *ptr1, void *ptr2);
 int			triple_free(void *ptr1, void *ptr2, void *ptr3);
 int			quadruple_free(void *ptr1, void *ptr2, void *ptr3, void *ptr4);
 void		thread_wait(long int milisec);
-void		switch_mutex_value(t_fork *fork, int value,
+void		switch_mutex_value(t_protect_flag *fork, int value,
 				t_philo *philo, char *ms);
-void		set_mutex_value(t_fork *fork, int value);
+void		set_mutex_value(t_protect_flag *fork, int value);
 void		*death_routin(void *pdata);
-int			is_true(t_fork *data);
+int			is_true(t_protect_flag *data);
 int			ft_atoi(const char *nptr);
 void		*philo_routin(void *philo);
 int			init_philo(t_data *data, t_philo *philo);
 int			init_table(t_data *data);
 void		pars(char **argv, t_data *data);
 long int	get_time(long int first_milisec);
-void		destroy_fork(t_fork *fork);
+void		destroy_protect_flag(t_protect_flag *fork);
 void		free_philos(t_philo *philo_list, int nb_philo);
 int			is_die(t_philo *philo);
 void		print_status(t_philo *philo, char *ms);

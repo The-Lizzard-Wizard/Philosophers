@@ -24,14 +24,10 @@ int	init_philo_fork(t_data *data, t_philo *philo)
 	philo->fork_left = NULL;
 	philo->fork_right = NULL;
 	nightbor_id = ((philo->id - 1) + data->nb_philo - 1) % data->nb_philo;
-	philo->fork_left = malloc(sizeof(t_fork));
+	philo->fork_left = malloc(sizeof(t_protect_flag));
 	if (!philo->fork_left)
 		return (0);
-	if (pthread_mutex_init(&philo->fork_left->mutex, NULL) != 0)
-	{
-		free(philo->fork_left);
-		return (0);
-	}
+	pthread_mutex_init(&philo->fork_left->mutex, NULL);
 	philo->fork_left->flag = FALSE;
 	if (philo->id > 1)
 		philo->fork_right = data->philo_list[nightbor_id].fork_left;
@@ -64,22 +60,19 @@ int	init_philo(t_data *data, t_philo *philo)
 
 int	init_table_2(t_data *data)
 {
-	data->first_milisec = get_time(0) + (data->nb_philo * 2 * 10);
+	data->first_milisec = get_time(0) + (data->nb_philo * 2);
 	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo_list)
 		return (0);
-	data->run = malloc(sizeof(t_fork));
+	data->run = malloc(sizeof(t_protect_flag));
 	if (!data->run)
 		return (free(data->philo_list), 0);
 	data->run->flag = 1;
-	data->can_draw = malloc(sizeof(t_fork));
+	data->can_draw = malloc(sizeof(t_protect_flag));
 	if (!data->can_draw)
-		return (free(data->philo_list), free(data->run), 0);
-	if (pthread_mutex_init(&data->run->mutex, NULL) != 0)
-		return (free(data->run), free(data->philo_list), 0);
-	if (pthread_mutex_init(&data->can_draw->mutex, NULL) != 0)
-		return (free(data->can_draw),
-			free(data->run), free(data->philo_list), 0);
+		return (double_free(data->philo_list, data->run));
+	pthread_mutex_init(&data->run->mutex, NULL);
+	pthread_mutex_init(&data->can_draw->mutex, NULL);
 	data->run->flag = TRUE;
 	data->can_draw->flag = TRUE;
 	return (1);
@@ -99,14 +92,14 @@ int	init_table(t_data *data)
 		data->philo_list[i].id = i + 1;
 		if (init_philo(data, &data->philo_list[i]) == 0)
 		{
-			destroy_fork(data->run);
+			destroy_protect_flag(data->run);
 			free_philos(data->philo_list, i);
 			return (0);
 		}
 		if (pthread_create(&data->philo_list[i].philo_tid,
 				NULL, &philo_routin, &data->philo_list[i]) != 0)
 		{
-			destroy_fork(data->run);
+			destroy_protect_flag(data->run);
 			free_philos(data->philo_list, i + 1);
 			return (0);
 		}

@@ -41,7 +41,6 @@ int	stop_philo(t_data *data)
 	unsigned int	i;
 
 	i = 0;
-	pthread_join(data->death_tid, NULL);
 	if (data->philo_list)
 	{
 		while (i < data->nb_philo)

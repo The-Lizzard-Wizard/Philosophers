@@ -16,7 +16,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-void	take_drop(t_protect_flag *fork, t_philo *philo, int flag, int *have_fork)
+void	take_drop(t_protect_flag *fork, t_philo *philo,
+					int flag, int *have_fork)
 {
 	if (flag == 1)
 	{

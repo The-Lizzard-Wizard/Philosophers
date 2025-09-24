@@ -63,10 +63,9 @@ typedef struct s_data
 	t_protect_flag	*can_draw;
 }	t_data;
 
+int			val_check(t_data *data);
 int			free_data(t_data *data);
 int			double_free(void *ptr1, void *ptr2);
-int			triple_free(void *ptr1, void *ptr2, void *ptr3);
-int			quadruple_free(void *ptr1, void *ptr2, void *ptr3, void *ptr4);
 void		thread_wait(long int milisec);
 void		switch_mutex_value(t_protect_flag *fork, int value,
 				t_philo *philo, char *ms);

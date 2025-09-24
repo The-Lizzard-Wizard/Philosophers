@@ -31,6 +31,17 @@ int	is_die(t_philo *philo)
 	return (FALSE);
 }
 
+void	check_eat(t_data *data, unsigned int i, unsigned int *food_ok)
+{
+	if (data->nb_philo > 1)
+	{
+		pthread_mutex_lock(&data->philo_list[i].eat_count_mutex);
+		if (data->philo_list[i].eat_count >= data->nb_eat)
+			(*food_ok)++;
+		pthread_mutex_unlock(&data->philo_list[i].eat_count_mutex);
+	}
+}
+
 void	*death_routin(void *pdata)
 {
 	unsigned int	i;
@@ -47,10 +58,7 @@ void	*death_routin(void *pdata)
 		while (i < data->nb_philo)
 		{
 			is_die(&data->philo_list[i]);
-			pthread_mutex_lock(&data->philo_list[i].eat_count_mutex);
-			if (data->philo_list[i].eat_count >= data->nb_eat)
-				food_ok++;
-			pthread_mutex_unlock(&data->philo_list[i].eat_count_mutex);
+			check_eat(data, i, &food_ok);
 			i++;
 		}
 		if (data->eat_limite == TRUE)

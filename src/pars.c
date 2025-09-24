@@ -14,6 +14,17 @@
 #include <pthread.h>
 #include <stdio.h>
 
+int	val_check(t_data *data)
+{
+	if (data->nb_philo <= 0 || data->time_to_die <= 0
+		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0)
+	{
+		printf("arg error : try a higher value\n");
+		return (0);
+	}
+	return (1);
+}
+
 void	pars(char **argv, t_data *data)
 {
 	data->nb_philo = ft_atoi(argv[1]);
@@ -26,5 +37,8 @@ void	pars(char **argv, t_data *data)
 		data->nb_eat = ft_atoi(argv[5]);
 	}
 	else
+	{
+		data->nb_eat = 0;
 		data->eat_limite = FALSE;
+	}
 }

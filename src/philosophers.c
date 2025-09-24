@@ -28,7 +28,11 @@ long int	get_time(long int first_milisec)
 int	start_philo(t_data *data)
 {
 	if (init_table(data) == 0)
+	{
+		free(data);
 		return (0);
+	}
+	death_routin(data);
 	return (1);
 }
 
@@ -57,11 +61,24 @@ int	main(int argc, char **argv)
 	t_data	*data;
 
 	if (argc < 5 || argc > 6)
+	{
+		printf("arg error : philosophers <arg1> <arg2> <arg3> <arg4> <arg5>");
+		printf("\n<arg1> : number of philo\n");
+		printf("<arg2> : time to die\n");
+		printf("<arg3> : time to eat\n");
+		printf("<arg4> : time to eat\n");
+		printf("<arg5> : number of eat (optinal)\n");
 		return (EXIT_FAILURE);
+	}
 	data = malloc(sizeof(t_data));
 	if (!data)
 		return (EXIT_FAILURE);
 	pars(argv, data);
+	if (val_check(data) == 0)
+	{
+		free(data);
+		return (EXIT_FAILURE);
+	}
 	if (start_philo(data) == 1)
 		stop_philo(data);
 	return (EXIT_SUCCESS);

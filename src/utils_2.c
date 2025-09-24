@@ -6,15 +6,22 @@
 /*   By: gchauvet <gchauvet@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/22 13:18:37 by gchauvet          #+#    #+#             */
-/*   Updated: 2025/09/22 18:02:35 by gchauvet         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:21:22 by gchauvet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-static int	calculate_number(const char *nptr, int n, int i)
+#include <limits.h>
+
+static int	calculate_number(const char *nptr, int i)
 {
+	long int	n;
+
+	n = 0;
 	while (nptr[i] >= '0' && nptr[i] <= '9')
 	{
 		n = n * 10 + (nptr[i] - '0');
+		if (n > INT_MAX)
+			return (0);
 		i++;
 	}
 	return (n);
@@ -22,10 +29,10 @@ static int	calculate_number(const char *nptr, int n, int i)
 
 int	ft_atoi(const char *nptr)
 {
-	int	i;
-	int	s;
-	int	n;
-	int	s2;
+	int			i;
+	int			s;
+	long int	n;
+	int			s2;
 
 	i = 0;
 	n = 0;
@@ -42,6 +49,6 @@ int	ft_atoi(const char *nptr)
 	}
 	if (s2 >= 2)
 		return (0);
-	n = calculate_number(nptr, n, i);
-	return (n * s);
+	n = calculate_number(nptr, i);
+	return ((int)(n * s));
 }

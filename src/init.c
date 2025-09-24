@@ -39,7 +39,7 @@ int	init_philo_fork(t_data *data, t_philo *philo)
 int	init_philo(t_data *data, t_philo *philo)
 {
 	philo->max_eat = data->nb_eat;
-	philo->nb_eat = 0;
+	philo->nb_eat = data->nb_eat;
 	philo->have_fork = 0;
 	philo->nb_philo = data->nb_philo;
 	philo->time_to_die = data->time_to_die;
@@ -54,7 +54,10 @@ int	init_philo(t_data *data, t_philo *philo)
 	pthread_mutex_init(&philo->eat_count_mutex, NULL);
 	pthread_mutex_init(&philo->eat_update_mutex, NULL);
 	if (init_philo_fork(data, philo) == 0)
+	{
+		destroy_protect_flag(data->can_draw);
 		return (0);
+	}
 	return (1);
 }
 
@@ -66,7 +69,10 @@ int	init_table_2(t_data *data)
 		return (0);
 	data->run = malloc(sizeof(t_protect_flag));
 	if (!data->run)
-		return (free(data->philo_list), 0);
+	{
+		free(data->philo_list);
+		return (0);
+	}
 	data->run->flag = 1;
 	data->can_draw = malloc(sizeof(t_protect_flag));
 	if (!data->can_draw)
@@ -84,10 +90,8 @@ int	init_table(t_data *data)
 
 	if (init_table_2(data) == 0)
 		return (0);
-	i = 0;
-	if (pthread_create(&data->death_tid, NULL, &death_routin, data) != 0)
-		return (0);
-	while (i < data->nb_philo)
+	i = -1;
+	while (++i < data->nb_philo)
 	{
 		data->philo_list[i].id = i + 1;
 		if (init_philo(data, &data->philo_list[i]) == 0)
@@ -103,7 +107,6 @@ int	init_table(t_data *data)
 			free_philos(data->philo_list, i + 1);
 			return (0);
 		}
-		i++;
 	}
 	return (1);
 }

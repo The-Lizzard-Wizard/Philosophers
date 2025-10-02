@@ -16,18 +16,18 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int	is_die(t_philo *philo)
+int	is_die(t_philo *plo)
 {
-	pthread_mutex_lock(&philo->eat_update_mutex);
-	if (get_time(philo->first_milisec + philo->last_eat) > philo->time_to_die)
+	pthread_mutex_lock(&plo->eat_update_mutex);
+	if (get_time((*plo->first_milisec) + plo->last_eat) > plo->time_to_die)
 	{
-		pthread_mutex_unlock(&philo->eat_update_mutex);
-		print_status(philo, "died");
-		drop_fork(philo);
-		set_mutex_value(philo->run, FALSE);
+		pthread_mutex_unlock(&plo->eat_update_mutex);
+		print_status(plo, "died");
+		drop_fork(plo);
+		set_mutex_value(plo->run, FALSE);
 		return (TRUE);
 	}
-	pthread_mutex_unlock(&philo->eat_update_mutex);
+	pthread_mutex_unlock(&plo->eat_update_mutex);
 	return (FALSE);
 }
 

@@ -78,7 +78,7 @@ void	philo_eat(t_philo *philo)
 	philo->eat_count++;
 	pthread_mutex_unlock(&philo->eat_count_mutex);
 	pthread_mutex_lock(&philo->eat_update_mutex);
-	philo->last_eat = get_time(philo->first_milisec);
+	philo->last_eat = get_time((*philo->first_milisec));
 	pthread_mutex_unlock(&philo->eat_update_mutex);
 	thread_wait(philo->time_to_eat);
 	drop_fork(philo);
@@ -91,7 +91,9 @@ void	*philo_routin(void *data)
 	t_philo		*philo;
 
 	philo = (t_philo *)data;
-	while (get_time(0) < philo->first_milisec)
+	pthread_mutex_lock(philo->start_mutex);
+	pthread_mutex_unlock(philo->start_mutex);
+	while (get_time(0) < (*philo->first_milisec))
 		usleep(100);
 	print_status(philo, "is thinking");
 	if (philo->id % 2 == 1)

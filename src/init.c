@@ -46,11 +46,12 @@ int	init_philo(t_data *data, t_philo *philo)
 	philo->time_to_eat = data->time_to_eat;
 	philo->time_to_sleep = data->time_to_sleep;
 	philo->eat_count = 0;
-	philo->first_milisec = data->first_milisec;
+	philo->first_milisec = &data->first_milisec;
 	philo->can_draw = data->can_draw;
 	philo->fork_right = NULL;
 	philo->last_eat = 0;
 	philo->run = data->run;
+	philo->start_mutex = &data->start_mutex;
 	pthread_mutex_init(&philo->eat_count_mutex, NULL);
 	pthread_mutex_init(&philo->eat_update_mutex, NULL);
 	if (init_philo_fork(data, philo) == 0)
@@ -63,7 +64,6 @@ int	init_philo(t_data *data, t_philo *philo)
 
 int	init_table_2(t_data *data)
 {
-	data->first_milisec = get_time(0) + (data->nb_philo * 2);
 	data->philo_list = malloc(sizeof(t_philo) * data->nb_philo);
 	if (!data->philo_list)
 		return (0);
@@ -81,6 +81,31 @@ int	init_table_2(t_data *data)
 	pthread_mutex_init(&data->can_draw->mutex, NULL);
 	data->run->flag = TRUE;
 	data->can_draw->flag = TRUE;
+	data->first_milisec = 0;
+	return (1);
+}
+
+int	init_philo_thread(t_data *data, unsigned int *i)
+{
+	data->philo_list[(*i)].id = (*i) + 1;
+	if (init_philo(data, &data->philo_list[(*i)]) == 0)
+	{
+		set_mutex_value(data->run, FALSE);
+		pthread_mutex_unlock(&data->start_mutex);
+		destroy_protect_flag(data->run);
+		free_philos(data->philo_list, (*i), 1);
+		return (0);
+	}
+	if (pthread_create(&data->philo_list[(*i)].philo_tid,
+			NULL, &philo_routin, &data->philo_list[(*i)]) != 0)
+	{
+		set_mutex_value(data->run, FALSE);
+		pthread_mutex_unlock(&data->start_mutex);
+		free_philos(data->philo_list, (*i) + 1, 1);
+		destroy_protect_flag(data->run);
+		destroy_protect_flag(data->can_draw);
+		return (0);
+	}
 	return (1);
 }
 
@@ -89,24 +114,15 @@ int	init_table(t_data *data)
 	unsigned int	i;
 
 	if (init_table_2(data) == 0)
+	{
+		pthread_mutex_unlock(&data->start_mutex);
 		return (0);
+	}
 	i = -1;
 	while (++i < data->nb_philo)
 	{
-		data->philo_list[i].id = i + 1;
-		if (init_philo(data, &data->philo_list[i]) == 0)
-		{
-			destroy_protect_flag(data->run);
-			free_philos(data->philo_list, i);
-			return (0);
-		}
-		if (pthread_create(&data->philo_list[i].philo_tid,
-				NULL, &philo_routin, &data->philo_list[i]) != 0)
-		{
-			destroy_protect_flag(data->run);
-			free_philos(data->philo_list, i + 1);
-			return (0);
-		}
+		init_philo_thread(data, &i);
 	}
+	data->first_milisec = get_time(0) + (data->nb_philo * 2);
 	return (1);
 }

@@ -42,10 +42,11 @@ typedef struct s_philo
 	pthread_t		philo_tid;
 	t_protect_flag	*fork_left;
 	t_protect_flag	*fork_right;
-	long int		first_milisec;
+	long int		*first_milisec;
 	t_protect_flag	*run;
 	long int		last_eat;
 	t_protect_flag	*can_draw;
+	pthread_mutex_t	*start_mutex;
 }	t_philo;
 
 typedef struct s_data
@@ -61,6 +62,7 @@ typedef struct s_data
 	int				eat_limite;
 	t_protect_flag	*run;
 	t_protect_flag	*can_draw;
+	pthread_mutex_t	start_mutex;
 }	t_data;
 
 int			val_check(t_data *data);
@@ -79,7 +81,7 @@ int			init_table(t_data *data);
 void		pars(char **argv, t_data *data);
 long int	get_time(long int first_milisec);
 void		destroy_protect_flag(t_protect_flag *fork);
-void		free_philos(t_philo *philo_list, int nb_philo);
+void		free_philos(t_philo *philo_list, int nb_philo, int join_flag);
 int			is_die(t_philo *philo);
 void		print_status(t_philo *philo, char *ms);
 void		drop_fork(t_philo *philo);

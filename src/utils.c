@@ -58,7 +58,7 @@ void	print_status(t_philo *philo, char *ms)
 	{
 		pthread_mutex_lock(&philo->can_draw->mutex);
 		pthread_mutex_lock(&philo->eat_update_mutex);
-		printf("%ld %d %s\n", get_time(philo->first_milisec), philo->id, ms);
+		printf("%ld %d %s\n", get_time((*philo->first_milisec)), philo->id, ms);
 		pthread_mutex_unlock(&philo->eat_update_mutex);
 		pthread_mutex_unlock(&philo->can_draw->mutex);
 	}

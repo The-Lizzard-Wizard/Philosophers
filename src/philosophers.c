@@ -27,12 +27,14 @@ long int	get_time(long int first_milisec)
 
 int	start_philo(t_data *data)
 {
+	pthread_mutex_init(&data->start_mutex, NULL);
+	pthread_mutex_lock(&data->start_mutex);
 	if (init_table(data) == 0)
 	{
 		free(data);
 		return (0);
 	}
-	death_routin(data);
+	pthread_mutex_unlock(&data->start_mutex);
 	return (1);
 }
 
@@ -43,15 +45,21 @@ int	stop_philo(t_data *data)
 	i = 0;
 	if (data->philo_list)
 	{
-		while (i < data->nb_philo)
-		{
-			pthread_join(data->philo_list[i].philo_tid, NULL);
-			i++;
-		}
-		free_philos(data->philo_list, data->nb_philo);
+		free_philos(data->philo_list, data->nb_philo, 0);
 	}
+	pthread_mutex_destroy(&data->start_mutex);
 	free_data(data);
 	return (1);
+}
+
+void	argc_error_ms(void)
+{
+	printf("arg error : philosophers <arg1> <arg2> <arg3> <arg4> <arg5>");
+	printf("\n<arg1> : number of philo\n");
+	printf("<arg2> : time to die\n");
+	printf("<arg3> : time to eat\n");
+	printf("<arg4> : time to eat\n");
+	printf("<arg5> : number of eat (optinal)\n");
 }
 
 int	main(int argc, char **argv)
@@ -61,12 +69,7 @@ int	main(int argc, char **argv)
 
 	if (argc < 5 || argc > 6)
 	{
-		printf("arg error : philosophers <arg1> <arg2> <arg3> <arg4> <arg5>");
-		printf("\n<arg1> : number of philo\n");
-		printf("<arg2> : time to die\n");
-		printf("<arg3> : time to eat\n");
-		printf("<arg4> : time to eat\n");
-		printf("<arg5> : number of eat (optinal)\n");
+		argc_error_ms();
 		return (EXIT_FAILURE);
 	}
 	data = malloc(sizeof(t_data));
@@ -79,6 +82,9 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	}
 	if (start_philo(data) == 1)
+	{
+		death_routin(data);
 		stop_philo(data);
+	}
 	return (EXIT_SUCCESS);
 }

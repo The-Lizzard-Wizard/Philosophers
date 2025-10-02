@@ -14,10 +14,19 @@
 #include <pthread.h>
 #include <stdlib.h>
 
-void	free_philos(t_philo *philo_list, int nb_philo)
+void	free_philos(t_philo *philo_list, int nb_philo, int join_flag)
 {
 	int	index;
 
+	index = 0;
+	if (nb_philo > 0)
+	{
+		while (index < nb_philo - join_flag)
+		{
+			pthread_join(philo_list[index].philo_tid, NULL);
+			index++;
+		}
+	}
 	index = 0;
 	while (index <= nb_philo - 1)
 	{

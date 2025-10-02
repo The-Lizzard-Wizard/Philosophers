@@ -18,13 +18,17 @@
 
 int	is_die(t_philo *plo)
 {
+	static int	someonedie = 0;
+
 	pthread_mutex_lock(&plo->eat_update_mutex);
 	if (get_time((*plo->first_milisec) + plo->last_eat) > plo->time_to_die)
 	{
 		pthread_mutex_unlock(&plo->eat_update_mutex);
-		print_status(plo, "died");
-		drop_fork(plo);
 		set_mutex_value(plo->run, FALSE);
+		if (someonedie != 1)
+			print_status_force(plo, "died");
+		drop_fork(plo);
+		someonedie = 1;
 		return (TRUE);
 	}
 	pthread_mutex_unlock(&plo->eat_update_mutex);

@@ -59,7 +59,7 @@ void	argc_error_ms(void)
 	printf("<arg2> : time to die\n");
 	printf("<arg3> : time to eat\n");
 	printf("<arg4> : time to eat\n");
-	printf("<arg5> : number of eat (optinal)\n");
+	printf("<arg5> : number of eat (optional)\n");
 }
 
 int	main(int argc, char **argv)

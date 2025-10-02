@@ -84,6 +84,7 @@ void		destroy_protect_flag(t_protect_flag *fork);
 void		free_philos(t_philo *philo_list, int nb_philo, int join_flag);
 int			is_die(t_philo *philo);
 void		print_status(t_philo *philo, char *ms);
+void		print_status_force(t_philo *philo, char *ms);
 void		drop_fork(t_philo *philo);
 
 #endif

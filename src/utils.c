@@ -46,6 +46,15 @@ int	is_true(t_protect_flag *data)
 	return (flag);
 }
 
+void	print_status_force(t_philo *philo, char *ms)
+{
+	pthread_mutex_lock(&philo->can_draw->mutex);
+	pthread_mutex_lock(&philo->eat_update_mutex);
+	printf("%ld %d %s\n", get_time((*philo->first_milisec)), philo->id, ms);
+	pthread_mutex_unlock(&philo->eat_update_mutex);
+	pthread_mutex_unlock(&philo->can_draw->mutex);
+}
+
 void	print_status(t_philo *philo, char *ms)
 {
 	pthread_mutex_lock(&philo->run->mutex);
